@@ -22,14 +22,13 @@ app.post('/process_task', async (req, res) => {
         const result = await get_sber_token();
 
         if (result.error) {
-            res.status(400).json({
-                message: 'Ошибка получения токена',
-            });
+            res.status(400).json(result.error);
         }
 
         sberToken = result.result;
     }
 
+    // делаем запрос к API Сбера
     fetch('https://gigachat.devices.sberbank.ru/api/v1/chat/completions', {
         method: 'POST',
         headers: {
@@ -56,14 +55,11 @@ app.post('/process_task', async (req, res) => {
         .then((response) => response.json())
         .then((data) => {
             const str = JSON.stringify(data.choices[0].message.content, null, 2);
-            console.log(str);
+
             res.status(200).json(str);
         })
         .catch((error) => {
-            console.error('Error:', error);
-            res.status(400).json({
-                message: 'Ошибка получения данных',
-            });
+            res.status(400).json(error);
         });
 });
 
