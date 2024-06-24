@@ -24,6 +24,23 @@ app.get('/', (req, res) => {
     res.status(200).send('Ok');
 });
 
+app.get('/send_tokens', async (req, res) => {
+    const token = await getSberToken();
+
+    res.set({
+        'Cache-Control': 'no-store, max-age=0',
+        Pragma: 'no-cache',
+        Expires: '0',
+    });
+
+    if (token.result) {
+        // `sber: ${token.result.access_token}`
+        res.status(200).send('Ok');
+    } else {
+        res.status(400).json(token.error);
+    }
+});
+
 app.post('/process_task', async (req, res) => {
     const data = req.body;
     const tokenRequest = await getSberToken();

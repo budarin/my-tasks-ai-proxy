@@ -45,7 +45,7 @@ async function createSberRequest(): SberTokenResult {
 }
 
 export async function getSberToken(): SberTokenResult {
-    if (!tokenPromise) {
+    if (tokenPromise === null) {
         tokenPromise = createSberRequest();
         return tokenPromise;
     }
@@ -57,7 +57,11 @@ export async function getSberToken(): SberTokenResult {
 
     const token = await tokenPromise;
 
-    if (token?.result && token.result.expires_at - Date.now() < 30000) {
+    if (
+        token.error ||
+        promiseStatus === 'rejected' ||
+        (token.result && token.result.expires_at - Date.now() < 30000)
+    ) {
         tokenPromise = createSberRequest();
     }
 
