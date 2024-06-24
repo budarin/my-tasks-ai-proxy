@@ -1,19 +1,20 @@
 {
-  "name": "my-tasks-ai-proxy",
-  "version": "1.0.0",
-  "main": "dist/index.js",
-  "repository": "https://github.com/budarin/my-tasks-ai-proxy.git",
-  "author": "Vadim Budarin <budarin-vv@yandex.ru>",
-  "license": "none",
-  "private": true,
-  "dependencies": {
-    "@types/express": "^4.17.21",
-    "@types/node": "^20.11.25",
-    "express": "^4.19.2",
-    "typescript": "^5.4.2"
-  },
-  "scripts": {
-    "start": "./scripts/start.sh",
-    "upgrade deps": "yarn upgrade-interactive --latest"
-  }
+    "name": "my-tasks-ai-proxy",
+    "version": "1.0.0",
+    "main": "dist/index.js",
+    "repository": "https://github.com/budarin/my-tasks-ai-proxy.git",
+    "author": "Vadim Budarin <budarin-vv@yandex.ru>",
+    "license": "none",
+    "private": true,
+    "dependencies": {
+        "@types/express": "^4.17.21",
+        "@types/node": "^20.11.25",
+        "express": "^4.19.2",
+        "typescript": "^5.4.2"
+    },
+    "scripts": {
+        "build": "./scripts/build.sh",
+        "start": "./scripts/start.sh",
+        "upgrade deps": "yarn upgrade-interactive --latest"
+    }
 }
