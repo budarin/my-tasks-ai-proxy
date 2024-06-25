@@ -123,7 +123,7 @@ export async function processSberRequest(
     req: Request<{}, {}, ProcessTaskRequestBody>,
     res: Response,
 ) {
-    const { aiProvider, authorization, taskDescription } = req.body;
+    const { authorization, taskDescription } = req.body;
 
     if (!authorization) {
         res.status(400).json(new Error('no authorization'));

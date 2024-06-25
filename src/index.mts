@@ -1,6 +1,8 @@
+import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import express, { Request, Response } from 'express';
 
+import { corsOptions } from './consts.mjs';
 import { processSberRequest } from './seber.mjs';
 import { processYandexRequest } from './yandex.mjs';
 
@@ -17,17 +19,21 @@ app.get('/', (_, res) => {
     res.status(200).send('Ok');
 });
 
-app.post('/process_task', async (req: Request<{}, {}, ProcessTaskRequestBody>, res: Response) => {
-    const { aiProvider } = req.body;
+app.post(
+    '/process_task',
+    cors(corsOptions),
+    async (req: Request<{}, {}, ProcessTaskRequestBody>, res: Response) => {
+        const { aiProvider } = req.body;
 
-    if (aiProvider === 'sber') {
-        processSberRequest(req, res);
-    }
+        if (aiProvider === 'sber') {
+            processSberRequest(req, res);
+        }
 
-    if (aiProvider === 'yandex') {
-        processYandexRequest(req, res);
-    }
-});
+        if (aiProvider === 'yandex') {
+            processYandexRequest(req, res);
+        }
+    },
+);
 
 // ------------------------------------------------------------------
 

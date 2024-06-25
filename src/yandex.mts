@@ -15,7 +15,7 @@ export async function processYandexRequest(
     req: Request<{}, {}, ProcessTaskRequestBody>,
     res: Response,
 ) {
-    const { aiProvider, authorization, taskDescription } = req.body;
+    const { authorization, taskDescription } = req.body;
 
     fetch('https://llm.api.cloud.yandex.net/foundationModels/v1/completion', {
         method: 'POST',
