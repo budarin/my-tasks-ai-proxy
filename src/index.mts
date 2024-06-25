@@ -12,6 +12,7 @@ const app = express();
 app.use(express.static('dist/client'));
 app.use(express.json());
 app.use(cookieParser());
+app.use(cors(corsOptions));
 
 // ------------------------------------------------------------------
 
@@ -19,21 +20,17 @@ app.get('/', (_, res) => {
     res.status(200).send('Ok');
 });
 
-app.post(
-    '/process_task',
-    cors(corsOptions),
-    async (req: Request<{}, {}, ProcessTaskRequestBody>, res: Response) => {
-        const { aiProvider } = req.body;
+app.post('/process_task', async (req: Request<{}, {}, ProcessTaskRequestBody>, res: Response) => {
+    const { aiProvider } = req.body;
 
-        if (aiProvider === 'sber') {
-            processSberRequest(req, res);
-        }
+    if (aiProvider === 'sber') {
+        processSberRequest(req, res);
+    }
 
-        if (aiProvider === 'yandex') {
-            processYandexRequest(req, res);
-        }
-    },
-);
+    if (aiProvider === 'yandex') {
+        processYandexRequest(req, res);
+    }
+});
 
 // ------------------------------------------------------------------
 
