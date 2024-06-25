@@ -1,5 +1,5 @@
-import express, { Request, Response } from 'express';
 import cookieParser from 'cookie-parser';
+import express, { Request, Response } from 'express';
 
 import { processSberRequest } from './seber.mjs';
 import { processYandexRequest } from './yandex.mjs';
@@ -13,7 +13,7 @@ app.use(cookieParser());
 
 // ------------------------------------------------------------------
 
-app.get('/', (req, res) => {
+app.get('/', (_, res) => {
     res.status(200).send('Ok');
 });
 

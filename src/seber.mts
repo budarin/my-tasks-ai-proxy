@@ -1,6 +1,7 @@
-import { Request, Response } from 'express';
-import path from 'path';
 import fs from 'fs';
+import path from 'path';
+import { Request, Response } from 'express';
+
 import { appJson, tryParseJson } from './consts.mjs';
 
 const pem = fs.readFileSync(path.resolve('./certs/russian_trusted_root_ca.cer')).toString();
