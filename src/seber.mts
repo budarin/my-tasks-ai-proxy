@@ -1,15 +1,26 @@
+import { Request, Response } from 'express';
 import path from 'path';
 import fs from 'fs';
+import { appJson, tryParseJson } from './consts.mjs';
 
 const pem = fs.readFileSync(path.resolve('./certs/russian_trusted_root_ca.cer')).toString();
-
 process.env.NODE_EXTRA_CA_CERTS = pem;
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
 
 let tokenPromise: SberTokenResult | null = null;
 let promiseStatus: 'pendig' | 'fulfilled' | 'rejected' = 'pendig';
 
-async function createSberRequest(): SberTokenResult {
+const requestDefaultParams = {
+    model: 'GigaChat',
+    temperature: 1.0,
+    top_p: 0.1,
+    n: 1,
+    stream: false,
+    max_tokens: 512,
+    repetition_penalty: 1,
+};
+
+async function createSberTokenRequest(authorization: string): SberTokenResult {
     if (process.env.NODE_ENV !== 'production') {
         console.log('start createSberRequest');
     }
@@ -22,7 +33,7 @@ async function createSberRequest(): SberTokenResult {
             'Content-Type': 'application/x-www-form-urlencoded',
             Accept: 'application/json',
             RqUID: '04633e8d-50d2-4868-ad3e-803b779106e9',
-            Authorization: `Basic ${process.env.SBER_KEY}`,
+            Authorization: `Basic ${authorization}`,
         },
         body: new URLSearchParams({
             scope: 'GIGACHAT_API_PERS',
@@ -44,9 +55,9 @@ async function createSberRequest(): SberTokenResult {
         });
 }
 
-export async function getSberToken(): SberTokenResult {
+export async function getSberToken(authorization: string): SberTokenResult {
     if (tokenPromise === null) {
-        tokenPromise = createSberRequest();
+        tokenPromise = createSberTokenRequest(authorization);
         return tokenPromise;
     }
 
@@ -62,8 +73,120 @@ export async function getSberToken(): SberTokenResult {
         promiseStatus === 'rejected' ||
         (token.result && token.result.expires_at - Date.now() < 30000)
     ) {
-        tokenPromise = createSberRequest();
+        tokenPromise = createSberTokenRequest(authorization);
     }
 
     return tokenPromise as SberTokenResult;
 }
+
+async function processToken(authorization: string, res: Response) {
+    const tokenRequest = await getSberToken(authorization);
+
+    if (tokenRequest !== null && tokenRequest.result) {
+        const sberToken = tokenRequest.result;
+
+        res.cookie('token', JSON.stringify(sberToken), {
+            maxAge: sberToken.expires_at,
+            httpOnly: true,
+        });
+    }
+
+    return tokenRequest;
+}
+
+async function processSberCookie(
+    authorization: string,
+    req: Request<{}, {}, ProcessTaskRequestBody>,
+    res: Response,
+): SberTokenResult {
+    const tokenString = req.cookies.token;
+
+    if (!tokenString) {
+        return processToken(authorization, res);
+    }
+
+    const token = tryParseJson(tokenString);
+
+    if (!token) {
+        return processToken(authorization, res);
+    }
+
+    if (!token || token.expires_at < Date.now()) {
+        return processToken(authorization, res);
+    } else {
+        return { result: token };
+    }
+}
+
+export async function processSberRequest(
+    req: Request<{}, {}, ProcessTaskRequestBody>,
+    res: Response,
+) {
+    const { aiProvider, authorization, taskDescription } = req.body;
+
+    if (!authorization) {
+        res.status(400).json(new Error('no authorization'));
+        return;
+    }
+
+    const sberToken = await processSberCookie(authorization, req, res);
+
+    if (sberToken.error) {
+        res.status(400).json(sberToken.error);
+        return;
+    }
+
+    // делаем запрос к API Сбера
+    fetch('https://gigachat.devices.sberbank.ru/api/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+            Accept: appJson,
+            'Content-Type': appJson,
+            Authorization: `Bearer ${sberToken.result.access_token}`,
+        },
+        body: JSON.stringify({
+            ...requestDefaultParams,
+            messages: [
+                // {
+                //     role: 'system',
+                //     text: JSON.stringify('Ты мой друг'),
+                // },
+                {
+                    role: 'user',
+                    text: JSON.stringify('Привет! Как твои дела?'),
+                },
+            ],
+        }),
+    })
+        .then((response) => response.json())
+        .then((data) => {
+            const str = JSON.stringify(data.choices[0].message.content);
+
+            res.status(200).json(str);
+        })
+        .catch((error) => {
+            res.status(400).json(error);
+        });
+}
+
+/*
+async function postData(url = '', data = {}) {
+  const response = await fetch(url, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(data)
+  });
+    
+  return response.json();
+}
+
+await postData('process_task', { aiProvider: 'sber', authorization: 'OWNi......2MDE5ZmM5Nw==' })
+  .then(data => {
+    console.log(data);
+  })
+  .catch(error => {
+    console.error('Error:', error);
+  });
+*/

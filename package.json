@@ -9,6 +9,7 @@
     "dependencies": {
         "@types/express": "^4.17.21",
         "@types/node": "^20.11.25",
+        "cookie-parser": "^1.4.6",
         "express": "^4.19.2",
         "typescript": "^5.4.2"
     },
@@ -16,5 +17,8 @@
         "build": "./scripts/build.sh",
         "start": "./scripts/start.sh",
         "upgrade deps": "yarn upgrade-interactive --latest"
+    },
+    "devDependencies": {
+        "@types/cookie-parser": "^1.4.7"
     }
 }

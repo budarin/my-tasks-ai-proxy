@@ -1,16 +1,22 @@
 type ResultOrError<T, E = any> =
-  | {
-      result: DeepReadonly<T>;
-      error?: never;
-    }
-  | {
-      result?: never;
-      error: DeepReadonly<JsonRpcError<E>>;
-    };
+    | {
+          result: T;
+          error?: never;
+      }
+    | {
+          result?: never;
+          error: Error;
+      };
 
 type SberToken = {
-  access_token: string;
-  expires_at: number;
+    access_token: string;
+    expires_at: number;
 };
 
 declare type SberTokenResult = Promise<ResultOrError<SberToken>>;
+
+interface ProcessTaskRequestBody {
+    authorization: string;
+    taskDescription: string;
+    aiProvider: 'yandex' | 'sber';
+}
