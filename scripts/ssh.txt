@@ -1,0 +1,10 @@
+ssh -i "d:\ssh\key_pair" budarin@176.109.109.102
+
+sudo nano /etc/angie/sites-enabled/budarinv.ru.conf
+sudo nano /etc/angie/angie.conf
+sudo angie -t
+sudo cat /var/log/angie/access.log
+sudo cat /var/log/angie/error.log
+
+sudo service angie reload
+
