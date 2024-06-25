@@ -20,6 +20,8 @@ app.get('/', (_, res) => {
     res.status(200).send('Ok');
 });
 
+app.options('*', cors(corsOptions));
+
 app.post('/process_task', async (req: Request<{}, {}, ProcessTaskRequestBody>, res: Response) => {
     const { aiProvider } = req.body;
 
