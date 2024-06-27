@@ -13,10 +13,15 @@ type SberToken = {
     expires_at: number;
 };
 
-declare type SberTokenResult = Promise<ResultOrError<SberToken>>;
+type SberTokenResult = Promise<ResultOrError<SberToken>>;
+type TaskDescription = {
+    text: string;
+    categories: string[];
+    priorities: string[];
+};
 
 interface ProcessTaskRequestBody {
     authorization: string;
-    taskDescription: string;
+    taskDescription: TaskDescription;
     aiProvider: 'yandex' | 'sber';
 }
