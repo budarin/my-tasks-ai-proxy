@@ -92,7 +92,7 @@ export async function processYandexRequest(
             messages: [
                 {
                     role: 'system',
-                    text: 'Ты мой секретарь.Я описываю тебе задание - ты извлекаешь из него задачу для календаря.',
+                    text: 'Ты мой секретарь.Ты ведешь календарь моих задач.',
                 },
                 {
                     role: 'user',

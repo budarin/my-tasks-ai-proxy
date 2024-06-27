@@ -223,8 +223,7 @@ export async function processSberRequest(
             messages: [
                 {
                     role: 'system',
-                    content:
-                        'Ты мой секретарь.Я описываю тебе задание - ты извлекаешь из него задачу для календаря.',
+                    content: 'Ты мой секретарь.Ты ведешь календарь моих задач.',
                 },
                 {
                     role: 'user',
