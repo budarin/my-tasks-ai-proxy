@@ -244,23 +244,34 @@ export async function processSberRequest(
 }
 
 /*
-async function postData(url = '', data = {}) {
+
+async function postData(url = "", data = {}) {
   const response = await fetch(url, {
-    method: 'POST',
+    method: "POST",
     headers: {
-      'Content-Type': 'application/json'
+      "Content-Type": "application/json",
     },
-    body: JSON.stringify(data)
+    body: JSON.stringify(data),
   });
-    
+
   return response.json();
 }
 
-await postData('process_task', { aiProvider: 'sber', authorization: 'OWNi......2MDE5ZmM5Nw==' })
-  .then(data => {
+await postData("/api/process_task", {
+  aiProvider: "sber",
+  authorization:
+    "OWNiODMyO...DE5ZmM5Nw==",
+  taskDescription: {
+    text: `После завтра позвонить на работу в 7 утра. Описать проблему`,
+    categories: ["Дом", "Работа", "Здоровье"],
+    priorities: ["обычный", "повышенный", "высокий"],
+  },
+})
+  .then((data) => {
     console.log(data);
   })
-  .catch(error => {
-    console.error('Error:', error);
+  .catch((error) => {
+    console.error("Error:", error);
   });
+
 */

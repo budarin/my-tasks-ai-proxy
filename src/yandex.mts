@@ -114,23 +114,33 @@ export async function processYandexRequest(
 }
 
 /*
-async function postData(url = '', data = {}) {
+
+async function postData(url = "", data = {}) {
   const response = await fetch(url, {
-    method: 'POST',
+    method: "POST",
     headers: {
-      'Content-Type': 'application/json'
+      "Content-Type": "application/json",
     },
-    body: JSON.stringify(data)
+    body: JSON.stringify(data),
   });
-    
+
   return response.json();
 }
 
-await postData('process_task', { aiProvider: 'yandex', authorization: 'AQVN2b........' })
-  .then(data => {
+await postData("/api/process_task", {
+  aiProvider: "yandex",
+  authorization: "AQVN2buSZ6.....MfEqPPShu3_cb",
+  taskDescription: {
+    text: `После завтра позвонить на работу в 7 утра. Описать проблему`,
+    categories: ["Дом", "Работа", "Здоровье"],
+    priorities: ["обычный", "повышенный", "высокий"],
+  },
+})
+  .then((data) => {
     console.log(data);
   })
-  .catch(error => {
-    console.error('Error:', error);
+  .catch((error) => {
+    console.error("Error:", error);
   });
+
 */
