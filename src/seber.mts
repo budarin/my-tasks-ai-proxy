@@ -3,6 +3,7 @@ import path from 'path';
 import { Request, Response } from 'express';
 
 import { appJson, tryParseJson } from './consts.mjs';
+import { getSberPrompt } from './prompts/sber.mjs';
 
 const pem = fs.readFileSync(path.resolve('./certs/russian_trusted_root_ca.cer')).toString();
 process.env.NODE_EXTRA_CA_CERTS = pem;
@@ -119,87 +120,6 @@ async function processSberCookie(
     }
 }
 
-function getPrompt({ text, categories, priorities }: TaskDescription) {
-    const dt = new Date();
-    return JSON.stringify(`Сейчас: ${dt.toLocaleDateString()} ${dt.toLocaleTimeString()}
-Текст задания: "${text}".
-
-Инструкции:
-1. Определи, является ли текст задачей. Задача - это действие, которое необходимо выполнить.
-2. Если текст не является задачей, ответь пустым объектом {} и завершай работу.
-3. Если текст является задачей, продолжай выполнение следующих шагов.
-
-Из текста выбери: 
-- название задачи (до 100 символов)
-- детали задачи (до 500 символов)
-- дату задачи YYYY-MM-DD
-- время выполнения задачи HH:MM 
-
-Категии задач: [${categories}]
-Приоритеты: [${priorities}]
-
-Укажи подходящую категорию из списка и приоритет.
-Если даты и время не указаны в тексте - не выдумывай и не вставляй ничего.
-Важно: если дата или время указаны не явно (пример: завтра, на следующей неделе, в следующем месяце и т.п.) - вычисли ее по отношению к текущей дате и времени.
-Будь внимателен и точен.
-
-Примеры:
-1. Текст задания: "Купить продукты завтра в 10:00. Хлеб -1шт, молоко - 1л."
-Результат: 
-{
-"title": "Купить продукты",
-"description": "Хлеб -1шт, молоко - 1л.",
-"date": "2024-06-28",
-"time": "10:00",
-"category": "Дом",
-"priority": "обычный"
-}
-
-2. Текст задания: "Встретить маму в 3 часа."
-Результат: 
-{
-"title": "Встреча по работе",
-"date": "2024-06-27",
-"time": "15:00",
-"category": "Работа",
-"priority": "обычный"
-}
-
-3. Текст задания: "Завтра у меня встреча по работе."
-Результат: 
-{
-"title": "Встреча по работе",
-"date": "2024-06-28",
-"category": "Работа",
-"priority": "обычный"
-}
-
-4. Текст задания: "В последнее воскресенье следующего месяца"
-Результат: 
-{
-"title": "Сходить в баню",
-"date": "2024-07-28",
-"priority": "обычный"
-}
-
-5. Текст задания: "Сегодня хорошая погода."
-Текст не является задачей, поэтому результат:{}
-
-6. Текст задания: "Как хорошо на свете жить."
-Результат:{}
-
-Ответ подготовь в формате JSON:
-{
-"title": название задачи,
-"description": детали задачи,
-"date": дата,
-"time": время,
-"category": категория,
-"priority": приоритет
-}
-`);
-}
-
 export async function processSberRequest(
     req: Request<{}, {}, ProcessTaskRequestBody>,
     res: Response,
@@ -235,16 +155,16 @@ export async function processSberRequest(
                 },
                 {
                     role: 'user',
-                    content: getPrompt(taskDescription),
+                    content: getSberPrompt(taskDescription),
                 },
             ],
         }),
     })
         .then((response) => response.json())
         .then((data) => {
-            const str = JSON.stringify(data.choices[0].message.content);
+            // const str = JSON.stringify(data.choices[0].message.content);
 
-            res.status(200).json(str);
+            res.status(200).json(data);
         })
         .catch((error) => {
             res.status(400).json(error);
