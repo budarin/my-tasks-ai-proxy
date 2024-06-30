@@ -3,7 +3,7 @@ export function getYandexPrompt({ text, categories, priorities }: TaskDescriptio
     return JSON.stringify(`Сейчас: ${dt.toLocaleDateString()} ${dt.toLocaleTimeString()}
 Текст задания: "${text}".
 
-Категии задач: [${categories}]
+Категории задач: [${categories}]
 Приоритеты: [${priorities}]
 
 Инструкции:

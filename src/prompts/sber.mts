@@ -4,7 +4,7 @@ export function getSberPrompt({ text, categories, priorities }: TaskDescription)
     return JSON.stringify(`Сейчас: ${dt.toLocaleDateString()} ${dt.toLocaleTimeString()}
 Текст задания: "${text}".
 
-Категии задач: [${categories}]
+Категории задач: [${categories}]
 Приоритеты: [${priorities}]
 
 Инструкции:
