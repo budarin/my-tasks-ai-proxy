@@ -163,44 +163,9 @@ export async function processSberRequest(
     })
         .then((response) => response.json())
         .then((data) => {
-            // const str = JSON.stringify(data.choices[0].message.content);
-
             res.status(200).json(data);
         })
         .catch((error) => {
             res.status(400).json(error);
         });
 }
-
-/*
-
-async function postData(url = "", data = {}) {
-  const response = await fetch(url, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(data),
-  });
-
-  return response.json();
-}
-
-await postData("/api/process_task", {
-  aiProvider: "sber",
-  authorization:
-    "OWNiODMyO...DE5ZmM5Nw==",
-  taskDescription: {
-    text: `После завтра позвонить на работу в 7 утра. Описать проблему`,
-    categories: ["Дом", "Работа", "Здоровье"],
-    priorities: ["обычный", "повышенный", "высокий"],
-  },
-})
-  .then((data) => {
-    console.log(data);
-  })
-  .catch((error) => {
-    console.error("Error:", error);
-  });
-
-*/

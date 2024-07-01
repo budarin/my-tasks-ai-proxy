@@ -41,7 +41,6 @@ export async function processYandexRequest(
     })
         .then((response) => response.json())
         .then((data) => {
-            // const str = JSON.stringify(data.result.alternatives[0].message.text);
             res.status(200).json(data);
         })
         .catch((error) => {
@@ -50,35 +49,3 @@ export async function processYandexRequest(
             res.status(400).json(error);
         });
 }
-
-/*
-
-async function postData(url = "", data = {}) {
-  const response = await fetch(url, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(data),
-  });
-
-  return response.json();
-}
-
-await postData("/api/process_task", {
-  aiProvider: "yandex",
-  authorization: "AQVN2buSZ6.....MfEqPPShu3_cb",
-  taskDescription: {
-    text: `После завтра позвонить на работу в 7 утра. Описать проблему`,
-    categories: ["Дом", "Работа", "Здоровье"],
-    priorities: ["обычный", "повышенный", "высокий"],
-  },
-})
-  .then((data) => {
-    console.log(data);
-  })
-  .catch((error) => {
-    console.error("Error:", error);
-  });
-
-*/
