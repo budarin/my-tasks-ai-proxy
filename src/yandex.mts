@@ -20,7 +20,6 @@ export async function processYandexRequest(
 
     fetch('https://llm.api.cloud.yandex.net/foundationModels/v1/completion', {
         method: 'POST',
-        mode: 'no-cors',
         headers: {
             'Content-Type': appJson,
             Authorization: `Api-Key ${authorization}`,
