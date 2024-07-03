@@ -38,7 +38,8 @@ export async function processYandexRequest(
             ],
         }),
     })
-        .then((response) => response.json())
+        .then((response) => response.text())
+        .then((text) => JSON.parse(text.replace(/`/g, '')))
         .then((data) => {
             res.status(200).json(data);
         })
