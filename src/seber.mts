@@ -1,5 +1,6 @@
 import fs from 'fs';
 import path from 'path';
+import { v4 as uuidv4 } from 'uuid';
 import { Request, Response } from 'express';
 
 import { appJson, tryParseJson } from './consts.mjs';
@@ -34,7 +35,7 @@ async function createSberTokenRequest(authorization: string): SberTokenResult {
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
             Accept: 'application/json',
-            RqUID: '04633e8d-50d2-4868-ad3e-803b779106e9',
+            RqUID: uuidv4(),
             Authorization: `Basic ${authorization}`,
         },
         body: new URLSearchParams({
